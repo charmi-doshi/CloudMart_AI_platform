@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudmart-frontend-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudmart-frontend-app
+  template:
+    metadata:
+      labels:
+        app: cloudmart-frontend-app
+    spec:
+      serviceAccountName: cloudmart-pod-execution-role
+      containers:
+      - name: cloudmart-frontend-app
+        image: public.ecr.aws/x7s0f8j5/cloudmart-frontend:latest
+        ports:
+        - containerPort: 5001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloudmart-frontend-app-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: cloudmart-frontend-app
+  ports:
+    - protocol: TCP
+      port: 80             # Changed this to 80 for standard HTTP
+      targetPort: 5001     # Your app listens on 5001
